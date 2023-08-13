@@ -1,35 +1,14 @@
 /*
- * C Source file Template by Bram Rodgers.
- * Original Draft Dated: 25, Feb 2018
+ * Parallel Tensor Train ODE solvers by Bram Rodgers.
+ * These are all implemented using an extended version of mpi-attac.
+ * Original Draft Dated: 08, July 2022
  */
 
 /*
  * Macros and Includes go here: (Some common ones included)
  */
 #include "paratt_ode.h"
-/*
- * Locally used helper functions:
- */
-typedef void (*vecField_ptr)(paratt*,paratt*,int,...);
 
-typedef struct{
-    vecField_ptr vF;
-    paratt* work_ptt;
-    double dt;
-} iEuler_t;
-/*
- * Static Local Variables:
- */
-//A function for evaluating the implicit euler method's linear operator.
-void ieuler_eval(paratt* arg_ptt,
-                 paratt* res_ptt, void* iEuler_data){
-    iEuler_t *dat = (iEuler_t*) iEuler_data;
-    dat->vF(arg_ptt, dat->work_ptt, 0);
-    attac_tt_axpby(1.0, arg_ptt->x, -dat->dt, dat->work_ptt->x, res_ptt->x);
-}
-/*
- * Function Implementations:
- */
 
 void attac_exp_euler_st(attac_tt* f_old_tt,
                         attac_tt* f_new_tt,
